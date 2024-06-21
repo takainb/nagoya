@@ -34,7 +34,7 @@ public class AdminHomeController {
 		long totalMembers = userRepository.countByRoleNameInRoleFreeMemberOrRolePaidMember();
 		long totalFreeMembers = userRepository.countByRole_Name("ROLE_FREE_MEMBER");
 		long totalPaidMembers = userRepository.countByRole_Name("ROLE_PAID_MEMBER");
-		;
+
 		long totalRestaurants = restaurantRepository.count();
 		long totalReservations = reservationRepository.count();
 

@@ -1,5 +1,7 @@
 package com.example.nagoyameshi.entity;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.sql.Timestamp;
 import java.time.LocalTime;
 import java.util.List;
@@ -11,6 +13,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
+import jakarta.persistence.Transient;
 import lombok.Data;
 
 @Entity
@@ -64,4 +67,25 @@ public class Restaurant {
 
 	@OneToMany(mappedBy = "restaurant")
 	private List<Review> reviews;
+
+	@Transient
+	public double getAverageScore() {
+		if (!reviews.isEmpty()) {
+			double totalScore = 0.0;
+			int reviewCount = 0;
+
+			for (Review review : reviews) {
+				totalScore += review.getScore();
+				reviewCount++;
+			}
+
+			// 小数点第3位を四捨五入する
+			BigDecimal bd = new BigDecimal(totalScore / reviewCount);
+			bd = bd.setScale(2, RoundingMode.HALF_UP);
+
+			return bd.doubleValue();
+		}
+
+		return 0.0;
+	}
 }
