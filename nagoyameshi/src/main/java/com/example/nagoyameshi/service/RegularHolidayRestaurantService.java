@@ -1,6 +1,7 @@
 package com.example.nagoyameshi.service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -82,4 +83,12 @@ public class RegularHolidayRestaurantService {
 
 	}
 
+	// 店舗の定休日のday_indexの値をリストで返す
+	public List<Integer> getRestaurantRegularHolidays(Restaurant restaurant) {
+		return regularHolidayRestaurantRepository.findByRestaurantOrderByRegularHoliday_IdAsc(restaurant)
+				.stream()
+				.map(RegularHolidayRestaurant::getRegularHoliday)
+				.map(RegularHoliday::getDayIndex)
+				.collect(Collectors.toList());
+	}
 }

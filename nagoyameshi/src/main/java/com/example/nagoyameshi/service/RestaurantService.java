@@ -172,12 +172,15 @@ public class RestaurantService {
 
 	// 評価が高い順に並べ替える（平均評価や標準偏差を使った独自のアルゴリズム）
 	public List<Restaurant> sortByRatingDesc(List<Restaurant> restaurants) {
-		Double averageScore = restaurantRepository.findAverageScore();
-		double standardDeviation = restaurantRepository.findStandardDeviation();
+		Double averageScore1 = restaurantRepository.findAverageScore();
+		Double standardDeviation1 = restaurantRepository.findStandardDeviation();
+
+		Double averageScore = (averageScore1 == null) ? Double.valueOf(0) : averageScore1;
+		Double standardDeviation = (standardDeviation1 == null) ? Double.valueOf(0) : standardDeviation1;
 
 		restaurants.sort((r1, r2) -> {
-			double rating1 = ((r1.getAverageScore() - averageScore) * 10 / standardDeviation) * r1.getReviews().size();
-			double rating2 = ((r2.getAverageScore() - averageScore) * 10 / standardDeviation) * r2.getReviews().size();
+			Double rating1 = ((r1.getAverageScore() - averageScore) * 10 / standardDeviation) * r1.getReviews().size();
+			Double rating2 = ((r2.getAverageScore() - averageScore) * 10 / standardDeviation) * r2.getReviews().size();
 			return Double.compare(rating2, rating1);
 		});
 

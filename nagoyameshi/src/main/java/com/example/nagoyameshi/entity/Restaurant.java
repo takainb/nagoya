@@ -4,7 +4,9 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.sql.Timestamp;
 import java.time.LocalTime;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -20,7 +22,6 @@ import lombok.Data;
 @Table(name = "restaurants")
 @Data
 public class Restaurant {
-
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "id")
@@ -68,8 +69,18 @@ public class Restaurant {
 	@OneToMany(mappedBy = "restaurant")
 	private List<Review> reviews;
 
+	@Transient // このアノテーションにより、Hibernateがこのフィールドをデータベースカラムとして扱わないようになる  
+	public List<Category> getCategories() {
+		if (!categoryRestaurants.isEmpty()) {
+			return categoryRestaurants.stream()
+					.map(CategoryRestaurant::getCategory)
+					.collect(Collectors.toList());
+		}
+		return new ArrayList<>();
+	}
+
 	@Transient
-	public double getAverageScore() {
+	public Double getAverageScore() {
 		if (!reviews.isEmpty()) {
 			double totalScore = 0.0;
 			int reviewCount = 0;
@@ -87,5 +98,29 @@ public class Restaurant {
 		}
 
 		return 0.0;
+	}
+
+	// 平均評価を四捨五入して0.5刻みで返す（星評価用）
+	@Transient
+	public Double getRoundedAverageScore() {
+		return Math.round(getAverageScore() * 2.0) / 2.0;
+	}
+
+	// 平均評価のフォーマットを整えて返す
+	@Transient
+	public String getFormattedAverageScore() {
+		double averageScore = getAverageScore();
+		String averageScoreStr = String.format("%.2f", averageScore);
+
+		if (averageScoreStr.endsWith(".00")) {
+			// 末尾が ".00" の場合、整数部分だけ返す
+			return averageScoreStr.substring(0, averageScoreStr.length() - 3);
+		} else if (averageScoreStr.endsWith("0")) {
+			// 末尾が "0" の場合、小数点第1位まで返す
+			return averageScoreStr.substring(0, averageScoreStr.length() - 1);
+		} else {
+			// それ以外はそのまま返す
+			return averageScoreStr;
+		}
 	}
 }
