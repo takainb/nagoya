@@ -1,5 +1,6 @@
 package com.example.nagoyameshi.entity;
 
+import java.io.Serializable;
 import java.sql.Timestamp;
 import java.time.LocalDate;
 
@@ -16,7 +17,7 @@ import lombok.Data;
 @Entity
 @Table(name = "users")
 @Data
-public class User {
+public class User implements Serializable {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "id")

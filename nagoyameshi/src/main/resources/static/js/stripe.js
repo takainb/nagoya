@@ -1,7 +1,10 @@
-const stripe = Stripe('pk_test_51Lcdg9H3mwyalYUk46aziPeYiD1r5WzCPaNoo9R13g0s145ose5W8t3OGhxQc78e2K7fJDJ6jcY6LiToqO6dlpwn00wnPuGSnz');
+const stripe = Stripe('pk_test_51P8kNtD5WWnNx9W8Rje68ltg4Fg2n3dpNXs8B9tJzgGyFOaDfsMXdiuNAN9IDdIfSKQdhwkKUVZZPmQMuOmVFRvQ00UyPvDNot');
 
 const elements = stripe.elements();
-const cardElement = elements.create('card');
+const cardElementOptions = {
+	hidePostalCode: true,
+};
+const cardElement = elements.create('card', cardElementOptions);
 cardElement.mount('#cardElement');
 
 const cardButton = document.getElementById('cardButton');
